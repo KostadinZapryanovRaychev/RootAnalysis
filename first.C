@@ -10,3 +10,4 @@ void first()
 // root for start
 // .x first.C
 // .q for quit
+// the ROOT header files. If you want adaptive code of this type, use the ROOT type declarations
