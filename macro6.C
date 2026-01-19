@@ -23,7 +23,7 @@ void macro6()
     TRandom3 rndgen;
     for (int imeas = 0; imeas < 4000; imeas++)
     {
-        bkg_h->Fill(rndgen.Exp(4)); // Exponential background
+        bkg_h->Fill(rndgen.Exp(4));
 
         // Add signals only some of the time to vary statistics
         if (imeas % 4 == 0)
