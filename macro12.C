@@ -1,4 +1,5 @@
 #include "TChain.h"
+#include <TROOT.h>
 #include <iostream>
 
 void macro12()
@@ -9,14 +10,28 @@ void macro12()
     TChain *ch = new TChain("cond_data", "Chain for Example N-Tuple");
 
     // 2. Add Files
-    // The asterisk (*) wildcards allow adding multiple files (e.g., data_run1.root, data_run2.root)
-    // Here we just have one file, but the syntax is generic.
-    ch->Add("conductivity_experiment*.root");
+    // The asterisk (*) wildcards allow adding multiple files
+    int nFiles = ch->Add("conductivity_experiment*.root");
 
-    std::cout << "Chain contains " << ch->GetEntries() << " entries." << endl;
-    std::cout << "Processing with MySelector..." << endl;
+    // 3. Check if files were actually found
+    if (nFiles == 0)
+    {
+        std::cout << "No files matching 'conductivity_experiment*.root' found." << std::endl;
+        std::cout << "Generating data now..." << std::endl;
+        gROOT->ProcessLine(".x generate_large_data.C");
+        ch->Add("conductivity_experiment_large.root");
+    }
 
-    // 3. Process the Chain
+    if (ch->GetEntries() == 0)
+    {
+        std::cout << "Error: Chain is empty." << std::endl;
+        return;
+    }
+
+    std::cout << "Chain contains " << ch->GetEntries() << " entries." << std::endl;
+    std::cout << "Processing with MySelector..." << std::endl;
+
+    // 4. Process the Chain
     // "MySelector.C+" means:
     //  - Load MySelector.C
     //  - The "+" tells ROOT to COMPILE it (ACLiC) for speed (~10x faster than interpreting)
