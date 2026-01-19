@@ -1,7 +1,7 @@
 #include <TChain.h>
-#include <TProof.h>
+// #include <TProof.h> // PROOF is not installed on this system
 #include <iostream>
-#include <TProof.h>
+// #include <TProof.h>
 
 void macro13()
 {
@@ -33,11 +33,11 @@ void macro13()
     // 2. Start PROOF Lite
     // "workers=4" tells ROOT to spin up 4 separate worker processes on your CPU.
     // If you omit the argument (""), ROOT uses all available cores.
-    TProof::Open("workers=4");
+    // TProof::Open("workers=4"); // Disabled: PROOF not installed
 
     // 3. Enable PROOF on the chain
     // This tells the Chain to distribute entries to the workers instead of processing locally.
-    ch->SetProof();
+    // ch->SetProof(); // Disabled: Run locally instead
 
     // 4. Process
     // "MySelector.C+" compiles the selector using ACLiC (Automatic Compiler of Libraries for C++)

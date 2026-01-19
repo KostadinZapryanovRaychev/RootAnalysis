@@ -1,5 +1,5 @@
 #include <TChain.h>
-#include <TProof.h>
+// #include <TProof.h> // PROOF not installed
 #include <iostream>
 
 void RunMySelector()
@@ -24,10 +24,10 @@ void RunMySelector()
     // workers=4 opens 4 parallel processes.
     // If you have more cores, you can increase this number (e.g., workers=8)
     // If you leave it empty (""), it uses all available cores.
-    TProof::Open("workers=4");
+    // TProof::Open("workers=4"); // Disabled: PROOF not installed
 
     // 3. Enable PROOF on the chain
-    ch->SetProof();
+    // ch->SetProof(); // Disabled: Run locally instead
 
     // 4. Process
     // The "+" ensures compilation, which is mandatory for PROOF
