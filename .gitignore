@@ -1,0 +1,6 @@
+# ignore all ROOT binary files
+*.root
+
+# ignore large AnalyzeEfficiency data files explicitly
+AnalyzeEfficiency_*.root
+
