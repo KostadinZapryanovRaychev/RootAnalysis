@@ -74,7 +74,7 @@ void muogr_v2(const char *fileName18, const char *fileName25, const char *histoP
       continue;
 
     TH1 *h18 = (TH1 *)key18->ReadObj();
-    std::string outName18 = std::string(key18->GetName()) + "_18.png";
+    std::string outName18 = std::string(key18->GetName()) + "_2018.png";
     std::replace(outName18.begin(), outName18.end(), '-', 'M');
     std::replace(outName18.begin(), outName18.end(), '+', 'P');
     std::string strforComp18 = std::string(key18->GetName());
@@ -95,7 +95,7 @@ void muogr_v2(const char *fileName18, const char *fileName25, const char *histoP
 
     if (h25 && gROOT->GetClass(h25->ClassName())->InheritsFrom("TH1"))
     {
-      std::string outName25 = std::string(h25->GetName()) + "_25.png";
+      std::string outName25 = std::string(h25->GetName()) + "_2025.png";
       std::replace(outName25.begin(), outName25.end(), '-', 'M');
       std::replace(outName25.begin(), outName25.end(), '+', 'P');
       std::string strforComp25 = std::string(h25->GetName());
@@ -110,8 +110,8 @@ void muogr_v2(const char *fileName18, const char *fileName25, const char *histoP
       h25->Draw("COLZ");
       c25->SaveAs(outName25.c_str());
 
-      std::string outNameRelRatio1Dpng = strforComp18 + "_relDiff1D.png";
-      std::string outNameRelRatio1D = strforComp18 + "_relDiff1D.C";
+      std::string outNameRelRatio1Dpng = strforComp18 + "_2018vs2025_relDiff1D.png";
+      std::string outNameRelRatio1D = strforComp18 + "_2018vs2025_relDiff1D.C";
 
       crelDif->cd();
       int xmax = h18->GetXaxis()->GetNbins();
