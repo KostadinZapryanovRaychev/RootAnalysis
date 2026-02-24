@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <set>
 #include "TROOT.h"
 #include "TFile.h"
 #include "TKey.h"
@@ -50,6 +51,27 @@ void muogr_v2(const char *fileName18, const char *fileName24, const char *histoP
   double mySigma = 99.;
   double fractionOne = 9.;
 
+  // chambers of interest: W-1 / S10 / MB1+MB2  and  W-1 / S02 / MB1+MB2
+  const std::set<std::string> targetChambers = {
+      "Muography_W-1_RB1in_S10_Backward",
+      "Muography_W-1_RB1in_S10_Forward",
+      "Muography_W-1_RB1out_S10_Backward",
+      "Muography_W-1_RB1out_S10_Forward",
+      "Muography_W-1_RB2in_S10_Backward",
+      "Muography_W-1_RB2in_S10_Middle",
+      "Muography_W-1_RB2in_S10_Forward",
+      "Muography_W-1_RB2out_S10_Backward",
+      "Muography_W-1_RB2out_S10_Forward",
+      "Muography_W-1_RB1in_S02_Backward",
+      "Muography_W-1_RB1in_S02_Forward",
+      "Muography_W-1_RB1out_S02_Backward",
+      "Muography_W-1_RB1out_S02_Forward",
+      "Muography_W-1_RB2in_S02_Backward",
+      "Muography_W-1_RB2in_S02_Middle",
+      "Muography_W-1_RB2in_S02_Forward",
+      "Muography_W-1_RB2out_S02_Backward",
+      "Muography_W-1_RB2out_S02_Forward"};
+
   int myCount = 0;
   while ((key18 = (TKey *)iter18.Next()))
   {
@@ -60,6 +82,10 @@ void muogr_v2(const char *fileName18, const char *fileName24, const char *histoP
     // crash. Now we always check before reading.
     TClass *cl18 = gROOT->GetClass(key18->GetClassName());
     if (!cl18 || !cl18->InheritsFrom("TH1"))
+      continue;
+
+    // only process the requested chambers
+    if (targetChambers.find(key18->GetName()) == targetChambers.end())
       continue;
 
     // BUG 3 FIX: the original code had a hardcoded substr(0,22) filter that
@@ -83,7 +109,7 @@ void muogr_v2(const char *fileName18, const char *fileName24, const char *histoP
     c18->SaveAs(outName18.c_str());
     int countZeros = 0;
 
-    std::string outName18RelRatio = "(Eff(2018)-Eff(2024))/(Eff(2018)+Eff(2024)) " + std::string(key18->GetName());
+    std::string outName18RelRatio = "(Eff(2018)-Eff(2025))/(Eff(2018)+Eff(2025)) " + std::string(key18->GetName());
     TH1F *myRelDiff1D = new TH1F("myRelDiff1D", outName18RelRatio.c_str(), 201, -2., +2.);
 
     // BUG 2 FIX: the original code rebuilt iter24 from scratch inside the outer
@@ -222,5 +248,5 @@ void muogr_v2(const char *fileName18, const char *fileName24, const char *histoP
   delete c24;
   delete crelDif;
   delete crelAssym;
-  delete hmyAssymetry;
+  // hmyAssymetry is owned by ROOT after Draw() — do not delete manually
 }
