@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <set>
 #include "TROOT.h"
 #include "TFile.h"
@@ -14,35 +15,35 @@
 #include "TCanvas.h"
 
 /**
- * fileName24  : path to the 2024 ROOT file (reference)
+ * fileName18  : path to the 2018 ROOT file (reference)
  * fileName25  : path to the 2025 ROOT file (comparison)
  * histoPath   : internal directory inside each file (e.g. "Muogr")
  *
  * Execution example:
- * [] .x muogr_v2.cxx("AnalyzeEfficiency_Aug_16Sept_2024G_RPCMon2024.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr");
+ * [] .x muogr_v2.cxx("AnalyzeEfficiency_321475_325172_RPCMon_2018D.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr");
  */
 
-void muogr_v2(const char *fileName24, const char *fileName25, const char *histoPath)
+void muogr_v2(const char *fileName18, const char *fileName25, const char *histoPath)
 {
   const std::string outDir = "output/";
 
-  TFile *file24 = TFile::Open(fileName24);
-  file24->cd();
+  TFile *file18 = TFile::Open(fileName18);
+  file18->cd();
   gDirectory->cd(histoPath);
-  TDirectory *dir24 = gDirectory;
-  TIter iter24(dir24->GetListOfKeys());
-  TKey *key24;
+  TDirectory *dir18 = gDirectory;
+  TIter iter18(dir18->GetListOfKeys());
+  TKey *key18;
 
   TFile *file25 = TFile::Open(fileName25);
   file25->cd();
   gDirectory->cd(histoPath);
   TDirectory *dir25 = gDirectory;
 
-  TCanvas *c24 = new TCanvas("c24", "c24", 558, 409, 900, 600);
+  TCanvas *c18 = new TCanvas("c18", "c18", 558, 409, 900, 600);
   TCanvas *c25 = new TCanvas("c25", "c25", 558, 409, 900, 600);
   TCanvas *crelDif = new TCanvas("crelDif", "crelDif", 558, 409, 900, 600);
 
-  TH1F *hmyAssymetry = new TH1F("hmyAssymetry", "Relative assymetry Eff(2024) vs Eff(2025)", 44, -1.1, 1.1);
+  TH1F *hmyAssymetry = new TH1F("hmyAssymetry", "Relative assymetry Eff(2018) vs Eff(2025)", 44, -1.1, 1.1);
   double myMean = 9.;
   double mySigma = 99.;
   double fractionOne = 9.;
@@ -60,36 +61,36 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
       "Muography_W-2_RB4-_S10_Forward"};
 
   int myCount = 0;
-  while ((key24 = (TKey *)iter24.Next()))
+  while ((key18 = (TKey *)iter18.Next()))
   {
     myCount++;
 
-    TClass *cl24 = gROOT->GetClass(key24->GetClassName());
-    if (!cl24 || !cl24->InheritsFrom("TH1"))
+    TClass *cl18 = gROOT->GetClass(key18->GetClassName());
+    if (!cl18 || !cl18->InheritsFrom("TH1"))
       continue;
 
-    if (targetChambers.find(key24->GetName()) == targetChambers.end())
+    if (targetChambers.find(key18->GetName()) == targetChambers.end())
       continue;
 
-    TH1 *h24 = (TH1 *)key24->ReadObj();
-    std::string outName24 = outDir + std::string(key24->GetName()) + "_2024.png";
-    std::replace(outName24.begin(), outName24.end(), '-', 'M');
-    std::replace(outName24.begin(), outName24.end(), '+', 'P');
-    std::string strforComp24 = std::string(key24->GetName());
-    std::replace(strforComp24.begin(), strforComp24.end(), '-', 'M');
-    std::replace(strforComp24.begin(), strforComp24.end(), '+', 'P');
-    std::cout << outName24.c_str() << std::endl;
-    c24->cd();
+    TH1 *h18 = (TH1 *)key18->ReadObj();
+    std::string outName18 = outDir + std::string(key18->GetName()) + "_2018.png";
+    std::replace(outName18.begin(), outName18.end(), '-', 'M');
+    std::replace(outName18.begin(), outName18.end(), '+', 'P');
+    std::string strforComp18 = std::string(key18->GetName());
+    std::replace(strforComp18.begin(), strforComp18.end(), '-', 'M');
+    std::replace(strforComp18.begin(), strforComp18.end(), '+', 'P');
+    std::cout << outName18.c_str() << std::endl;
+    c18->cd();
     gStyle->SetOptStat("nemriou");
     gStyle->SetOptFit(1);
-    h24->Draw("colz");
-    c24->SaveAs(outName24.c_str());
+    h18->Draw("colz");
+    c18->SaveAs(outName18.c_str());
     int countZeros = 0;
 
-    std::string outName24RelRatio = "(Eff(2024)-Eff(2025))/(Eff(2024)+Eff(2025)) " + std::string(key24->GetName());
-    TH1F *myRelDiff1D = new TH1F("myRelDiff1D", outName24RelRatio.c_str(), 201, -2., +2.);
+    std::string outName18RelRatio = "(Eff(2018)-Eff(2025))/(Eff(2018)+Eff(2025)) " + std::string(key18->GetName());
+    TH1F *myRelDiff1D = new TH1F("myRelDiff1D", outName18RelRatio.c_str(), 201, -2., +2.);
 
-    TH1 *h25 = (TH1 *)dir25->FindObjectAny(key24->GetName());
+    TH1 *h25 = (TH1 *)dir25->FindObjectAny(key18->GetName());
 
     if (h25 && gROOT->GetClass(h25->ClassName())->InheritsFrom("TH1"))
     {
@@ -108,31 +109,31 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
       h25->Draw("COLZ");
       c25->SaveAs(outName25.c_str());
 
-      std::string outNameRelRatio1Dpng = outDir + strforComp24 + "_2024vs2025_relDiff1D.png";
-      std::string outNameRelRatio1D = outDir + strforComp24 + "_2024vs2025_relDiff1D.C";
+      std::string outNameRelRatio1Dpng = outDir + strforComp18 + "_2018vs2025_relDiff1D.png";
+      std::string outNameRelRatio1D = outDir + strforComp18 + "_2018vs2025_relDiff1D.C";
 
       crelDif->cd();
-      int xmax = h24->GetXaxis()->GetNbins();
-      int ymax = h24->GetYaxis()->GetNbins();
+      int xmax = h18->GetXaxis()->GetNbins();
+      int ymax = h18->GetYaxis()->GetNbins();
       std::cout << "\nnumber of bins = " << xmax << "*" << ymax << " = " << xmax * ymax << std::endl;
       double rel = 99.;
-      double a24 = -1;
+      double a18 = -1;
       double a25 = -1;
 
       for (int i = 1; i <= xmax; i++)
       {
         for (int j = 1; j <= ymax; j++)
         {
-          a24 = h24->GetBinContent(i, j);
+          a18 = h18->GetBinContent(i, j);
           a25 = h25->GetBinContent(i, j);
-          if (a24 == 0 && a25 == 0)
+          if (a18 == 0 && a25 == 0)
           {
             countZeros++;
             myRelDiff1D->Fill(-2);
           }
           else
           {
-            rel = (a24 - a25) / (a24 + a25);
+            rel = (a18 - a25) / (a18 + a25);
             myRelDiff1D->Fill(rel);
           }
         }
@@ -160,6 +161,7 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
         crelDif->SaveAs(outNameRelRatio1Dpng.c_str());
         myMean = funcG->GetParameter(1);
         mySigma = funcG->GetParameter(2);
+        std::cout << std::fixed << std::setprecision(5);
         std::cout << "myMean " << myMean << std::endl;
         std::cout << "mySigma " << mySigma << std::endl;
         delete funcG;
@@ -182,6 +184,7 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
         hmyAssymetry->Fill(myAssimetry);
         int allEntries = myRelDiff1D->Integral();
         fractionOne = (entriesAtOne * 100.) / (allEntries * 1.);
+        std::cout << std::fixed << std::setprecision(5);
         std::cout << "myAssimetry " << myAssimetry << std::endl;
         std::cout << "fraction at one " << fractionOne << std::endl;
         std::cout << std::endl;
@@ -189,7 +192,7 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
       }
     }
 
-    delete h24;
+    delete h18;
     delete myRelDiff1D;
   }
 
@@ -198,13 +201,13 @@ void muogr_v2(const char *fileName24, const char *fileName25, const char *histoP
   gStyle->SetOptStat("emriou");
   hmyAssymetry->SetFillColor(kBlue + 1);
   hmyAssymetry->Draw();
-  crelAssym->SaveAs((outDir + "summary_relAssym_2024vs2025_WM2_S07_S09_S10.png").c_str());
-  crelAssym->SaveAs((outDir + "summary_relAssym_2024vs2025_WM2_S07_S09_S10.C").c_str());
+  crelAssym->SaveAs((outDir + "summary_relAssym_2018vs2025_WM2_S07_S09_S10.png").c_str());
+  crelAssym->SaveAs((outDir + "summary_relAssym_2018vs2025_WM2_S07_S09_S10.C").c_str());
 
-  file24->Close();
+  file18->Close();
   file25->Close();
 
-  delete c24;
+  delete c18;
   delete c25;
   delete crelDif;
   delete crelAssym;
