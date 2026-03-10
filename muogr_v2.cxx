@@ -252,20 +252,10 @@ void muogr_v2(const char *fileRef,
     delete myRelDiff1D;
   }
 
-  TCanvas *crelAssym = new TCanvas("crelAssym", "crelAssym", 558, 409, 900, 600);
-  crelAssym->cd();
-  gStyle->SetOptStat("emriou");
-  hmyAssymetry->SetFillColor(kBlue + 1);
-  hmyAssymetry->Draw();
-  std::string summaryBase = outDir + "summary_relAssym_" + sVsTag;
-  crelAssym->SaveAs((summaryBase + ".png").c_str());
-  crelAssym->SaveAs((summaryBase + ".C").c_str());
-
   fileR->Close();
   fileC->Close();
 
   delete cR;
   delete cC;
   delete crelDif;
-  delete crelAssym;
 }
