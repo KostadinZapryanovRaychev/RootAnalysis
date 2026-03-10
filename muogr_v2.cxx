@@ -21,12 +21,12 @@
  * histoPath    : internal directory inside each file (e.g. "Muogr")
  * year1        : label for the reference file  (e.g. "2018")
  * year2        : label for the comparison file (e.g. "2025")
- * chambersFile : path to a plain text file with one chamber name per line
+ * rollNamesFile : path to a plain text file with one roll name per line
  *
  * Execution examples:
- * [] .x muogr_v2.cxx("AnalyzeEfficiency_321475_325172_RPCMon_2018D.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr", "2018", "2025", "chambers.txt")
- * [] .x muogr_v2.cxx("AnalyzeEfficiency_Aug_16Sept_2024G_RPCMon2024.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr", "2024", "2025", "chambers.txt")
- * [] .x muogr_v2.cxx("AnalyzeEfficiency_321475_325172_RPCMon_2018D.root", "AnalyzeEfficiency_Aug_16Sept_2024G_RPCMon2024.root", "Muogr", "2018", "2024", "chambers.txt")
+ * [] .x muogr_v2.cxx("AnalyzeEfficiency_321475_325172_RPCMon_2018D.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr", "2018", "2025", "rollNames.txt")
+ * [] .x muogr_v2.cxx("AnalyzeEfficiency_Aug_16Sept_2024G_RPCMon2024.root", "AnalyzeEfficiency_396805_397817_RPCMon2025F.root", "Muogr", "2024", "2025", "rollNames.txt")
+ * [] .x muogr_v2.cxx("AnalyzeEfficiency_321475_325172_RPCMon_2018D.root", "AnalyzeEfficiency_Aug_16Sept_2024G_RPCMon2024.root", "Muogr", "2018", "2024", "rollNames.txt")
  */
 
 void muogr_v2(const char *fileRef,
@@ -34,7 +34,7 @@ void muogr_v2(const char *fileRef,
               const char *histoPath,
               const char *year1 = "2018",
               const char *year2 = "2025",
-              const char *chambersFile = "chambers.txt")
+              const char *rollNamesFile = "rollNames.txt")
 {
   const std::string outDir = "output/";
   const std::string sYear1 = std::string(year1);
@@ -52,15 +52,15 @@ void muogr_v2(const char *fileRef,
     std::cerr << "ERROR: comparison file not found: " << fileComp << std::endl;
     return;
   }
-  if (gSystem->AccessPathName(chambersFile))
+  if (gSystem->AccessPathName(rollNamesFile))
   {
-    std::cerr << "ERROR: chambers file not found: " << chambersFile << std::endl;
+    std::cerr << "ERROR: roll names file not found: " << rollNamesFile << std::endl;
     return;
   }
 
-  // --- load chamber list from text file ---
+  // --- load roll names from text file ---
   std::set<std::string> targetChambers;
-  std::ifstream ifs(chambersFile);
+  std::ifstream ifs(rollNamesFile);
   std::string line;
   while (std::getline(ifs, line))
   {
@@ -73,15 +73,15 @@ void muogr_v2(const char *fileRef,
 
   if (targetChambers.empty())
   {
-    std::cerr << "ERROR: no chambers loaded from " << chambersFile << std::endl;
+    std::cerr << "ERROR: no roll names loaded from " << rollNamesFile << std::endl;
     return;
   }
 
   std::cout << "\n  Reference    (" << sYear1 << ") : " << fileRef << std::endl;
   std::cout << "  Comparison   (" << sYear2 << ") : " << fileComp << std::endl;
   std::cout << "  HistoPath                   : " << histoPath << std::endl;
-  std::cout << "  Chambers file               : " << chambersFile << std::endl;
-  std::cout << "  Chambers loaded             : " << targetChambers.size() << "\n"
+  std::cout << "  Roll names file             : " << rollNamesFile << std::endl;
+  std::cout << "  Roll names loaded           : " << targetChambers.size() << "\n"
             << std::endl;
 
   TFile *fileR = TFile::Open(fileRef);
