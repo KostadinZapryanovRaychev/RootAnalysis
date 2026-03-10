@@ -41,6 +41,10 @@ void muogr_v2(const char *fileRef,
   const std::string sYear2 = std::string(year2);
   const std::string sVsTag = sYear1 + "vs" + sYear2;
 
+  // --- create output directory only if it does not exist ---
+  if (gSystem->AccessPathName(outDir.c_str()))
+    gSystem->mkdir(outDir.c_str(), kTRUE);
+
   // --- guard: check all input files exist ---
   if (gSystem->AccessPathName(fileRef))
   {
